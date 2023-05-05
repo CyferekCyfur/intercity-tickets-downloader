@@ -48,6 +48,6 @@ class PDFCrop:
 
 
 if __name__ == "__main__":
-    tickets_path = "/path/where/you"
-    qr_path = "/home/think/Documents/bot telegram/qrs/"
+    tickets_path = "/path/where/you/store/your/tickets"
+    qr_path = "/path/where/you/want/to/store/your/qrs"
     pdf = PDFCrop(tickets_path, qr_path)
