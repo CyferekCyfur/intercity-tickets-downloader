@@ -1,26 +1,53 @@
 import os
-# from pyPdf import PdfFileWriter, PdfFileReader
+from PyPDF2 import PdfReader, PdfWriter
 
 
 class PDFCrop:
-    def __init__(self, path):
-        self.path = path
+    def __init__(self, tickets_path, qr_path):
+        self.tickets_path = tickets_path
+        self.qr_path = qr_path
+        self.files = None
+        self.scan_for_tickets()
+        self.crop_pdf()
 
-    def get_path(self):
-        return self.path
+    def get_qr_path(self):
+        return self.qr_path
+    def get_tickets_path(self):
+        return self.tickets_path
+
+    def get_files(self):
+        return self.files
+
+    def set_files(self, x):
+        self.files = x
 
     def scan_for_tickets(self):
 
         file_type = "pdf"
 
-        files = os.listdir(path)
+        files = os.listdir(tickets_path)
         files = [file for file in files if file.split('.')[-1] == file_type]
-        return
+        self.set_files(files)
 
     def crop_pdf(self):
-        pass
+        for file in self.get_files():
+            read_qr = PdfReader(os.path.join(self.get_tickets_path(), file))
+            write_qr = PdfWriter()
+            read_qr.pages[0].cropbox.upper_left = (0, 500)
+            read_qr.pages[0].cropbox.lower_right = (1000, 1000)
+            write_qr.add_page(read_qr.pages[0])
+
+
+            os.mkdir(self.get_qr_path())
+            save_path = os.path.join("qr_", file)
+            with open(save_path, 'wb') as fp:
+                write_qr.write(fp)
+
+            del read_qr
+            del write_qr
 
 
 if __name__ == "__main__":
-    path = "/home/think/Documents/projekt bot telegram/tickets"
-    pdf = PDFCrop(path)
+    tickets_path = "/path/where/you"
+    qr_path = "/home/think/Documents/bot telegram/qrs/"
+    pdf = PDFCrop(tickets_path, qr_path)
