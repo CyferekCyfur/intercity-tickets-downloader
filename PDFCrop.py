@@ -37,10 +37,9 @@ class PDFCrop:
             read_qr.pages[0].cropbox.lower_right = (1000, 1000)
             write_qr.add_page(read_qr.pages[0])
 
-
-            os.mkdir(self.get_qr_path())
-            save_path = os.path.join("qr_", file)
-            with open(save_path, 'wb') as fp:
+            if not os.path.isdir(self.get_qr_path()):
+                os.mkdir(self.get_qr_path())
+            with open(self.get_qr_path() + "/qr_" + file, 'wb') as fp:
                 write_qr.write(fp)
 
             del read_qr
