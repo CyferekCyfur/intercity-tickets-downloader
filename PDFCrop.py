@@ -1,17 +1,19 @@
 import os
-from PyPDF2 import PdfReader, PdfWriter
+from pdf2image import convert_from_path
+from PIL import Image
 
 
 class PDFCrop:
     def __init__(self, tickets_path, qr_path):
         self.tickets_path = tickets_path
         self.qr_path = qr_path
-        self.files = None
-        self.scan_for_tickets()
-        self.crop_pdf()
+        self.files = self.scan_for_tickets(self.tickets_path)
+        self.convert()
+        self.crop_jpg()
 
     def get_qr_path(self):
         return self.qr_path
+
     def get_tickets_path(self):
         return self.tickets_path
 
@@ -21,29 +23,35 @@ class PDFCrop:
     def set_files(self, x):
         self.files = x
 
-    def scan_for_tickets(self):
+    def scan_for_tickets(self, path):
 
-        file_type = "pdf"
+        file_types = ["pdf", "jpg"]
 
-        files = os.listdir(tickets_path)
-        files = [file for file in files if file.split('.')[-1] == file_type]
-        self.set_files(files)
+        files = os.listdir(path)
+        files = [file for file in files if file.split('.')[-1] in file_types]
+        return files
 
-    def crop_pdf(self):
-        for file in self.get_files():
-            read_qr = PdfReader(os.path.join(self.get_tickets_path(), file))
-            write_qr = PdfWriter()
-            read_qr.pages[0].cropbox.upper_left = (0, 500)
-            read_qr.pages[0].cropbox.lower_right = (1000, 1000)
-            write_qr.add_page(read_qr.pages[0])
+    def crop_jpg(self):
+        files = self.scan_for_tickets(self.get_qr_path())
+        for file in files:
+            img = Image.open(self.get_qr_path() + file)
+            area = (0, 0, 1600, 950)
+            img2 = img.crop(area)
+            img2.save(self.get_qr_path() + file)
 
-            if not os.path.isdir(self.get_qr_path()):
-                os.mkdir(self.get_qr_path())
-            with open(self.get_qr_path() + "/qr_" + file, 'wb') as fp:
-                write_qr.write(fp)
+    def convert(self):
+        files = self.scan_for_tickets(self.get_tickets_path())
+        for file in files:
+            size = len(file)
+            image = convert_from_path(self.get_tickets_path() + file,
+                                      output_folder=self.get_qr_path(),
+                                      fmt="jpg",
+                                      output_file="qr_" + file[:size - 4])
 
-            del read_qr
-            del write_qr
+        files = self.scan_for_tickets(self.get_qr_path())
+        for file in files:
+            os.rename(self.get_qr_path() + file,
+                      (self.get_qr_path() + file).replace(file[-10:-4], ""))
 
 
 if __name__ == "__main__":
