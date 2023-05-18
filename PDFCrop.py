@@ -52,9 +52,3 @@ class PDFCrop:
         for file in files:
             os.rename(self.get_qr_path() + file,
                       (self.get_qr_path() + file).replace(file[-10:-4], ""))
-
-
-if __name__ == "__main__":
-    tickets_path = "/path/where/you/store/your/tickets"
-    qr_path = "/path/where/you/want/to/store/your/qrs"
-    pdf = PDFCrop(tickets_path, qr_path)

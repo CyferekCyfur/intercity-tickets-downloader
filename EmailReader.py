@@ -4,10 +4,10 @@ import email
 
 
 class EmailReader:
-    def __init__(self, user, password, dir, imap):
+    def __init__(self, user, password, tickets_path, imap):
         self.user = user
         self.password = password
-        self.dir = dir
+        self.tickets_path = tickets_path
         self.imap = imap
         self.data, self.mail_info = self.setup()
         self.download_attachments()
@@ -21,11 +21,14 @@ class EmailReader:
     def get_imap(self):
         return self.imap
 
+    def get_tickets_path(self):
+        return self.tickets_path
+
     def setup(self):
         mail_info = imaplib.IMAP4_SSL(self.get_imap(), 993)
         mail_info.login(self.get_user(), self.get_password())
         mail_info.select("Inbox")
-        _, data = mail_info.search(None, "FROM kubapro84@gmail.com")
+        _, data = mail_info.search(None, "FROM bilet.eic@intercity.pl")
         return data, mail_info
 
     def download_attachments(self):
@@ -41,18 +44,10 @@ class EmailReader:
                     if not filename:
                         filename = "ticket.pdf"
                     attachment = att.get_payload(decode=True)
-                    path = os.path.join(dir, filename)
+                    path = os.path.join(self.get_tickets_path(), filename)
                     with open(path, 'wb') as fp:
                         fp.write(attachment)
                         fp.close()
 
         self.mail_info.close()
         self.mail_info.logout()
-
-
-if __name__ == "__main__":
-    user = "your_mail"
-    password = "your_password"
-    dir = "/directory/where/you/want/to/save/pdfs"
-    imap = "imap_of_your_email"
-    e_read = EmailReader(user, password, dir, imap)
