@@ -4,7 +4,6 @@ from TelegramBot import TelegramBot
 import os
 import asyncio
 
-
 def main():
     user = "your_mail"
     password = "your_password"
@@ -35,7 +34,6 @@ def main():
     loop.create_task(process_tickets())
     loop.run_forever()
 
-
-
 if __name__ == "__main__":
     main()
+    

@@ -9,7 +9,7 @@ class EmailReader:
         self.password = password
         self.tickets_path = tickets_path
         self.imap = imap
-        self.data, self.mail_info = self.setup()
+        self.mail_info = self.setup()
 
     def get_user(self):
         return self.user
@@ -26,11 +26,11 @@ class EmailReader:
     def setup(self):
         mail_info = imaplib.IMAP4_SSL(self.get_imap(), 993)
         mail_info.login(self.get_user(), self.get_password())
-        mail_info.select("Inbox")
-        _, data = mail_info.search(None, "FROM bilet.eic@intercity.pl")
-        return data, mail_info
+        return mail_info
 
     def download_attachments(self):
+        self.mail_info.select("Inbox")
+        _, self.data = self.mail_info.search(None, "FROM bilet.eic@intercity.pl")
         for id in self.data[0].split():
             _, content = self.mail_info.fetch(id, "(RFC822)")
             body = content[0][1].decode('utf-8')
