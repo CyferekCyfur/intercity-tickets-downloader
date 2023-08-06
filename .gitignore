@@ -2,4 +2,3 @@
 *.pdf
 qrs/
 tickets/
-__pycache__/

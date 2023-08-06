@@ -7,8 +7,6 @@ To run this project, you will have to install undermentioned libraries:
 * PyPDF2
 * email
 * imaplib
-* pillow
-* pdf2image
 
 ## Setup
 In the main part of script, you will have to change your email, password, directory, where you want to store your tickets and imap of your mail. Then compile the EmailReader.py:
