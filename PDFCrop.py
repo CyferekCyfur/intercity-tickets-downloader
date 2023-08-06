@@ -7,9 +7,6 @@ class PDFCrop:
     def __init__(self, tickets_path, qr_path):
         self.tickets_path = tickets_path
         self.qr_path = qr_path
-        self.files = self.scan_for_tickets(self.tickets_path)
-        self.convert()
-        self.crop_jpg()
 
     def get_qr_path(self):
         return self.qr_path
