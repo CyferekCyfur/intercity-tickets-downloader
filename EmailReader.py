@@ -10,7 +10,6 @@ class EmailReader:
         self.tickets_path = tickets_path
         self.imap = imap
         self.data, self.mail_info = self.setup()
-        self.download_attachments()
 
     def get_user(self):
         return self.user
@@ -48,6 +47,12 @@ class EmailReader:
                     with open(path, 'wb') as fp:
                         fp.write(attachment)
                         fp.close()
+            self.mail_info.store(id, '+FLAGS', '\\Deleted')
+            self.mail_info.expunge()
 
         self.mail_info.close()
         self.mail_info.logout()
+    
+    def remove_attachments(self):
+        for file in os.listdir(self.get_tickets_path()):
+            os.remove(self.get_tickets_path() + file)
